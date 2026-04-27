@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pathfinding Visualizer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav id="navbar">
+      <span id="nav-title">Pathfinding Visualizer</span>
+
+      <div id="nav-controls">
+        <select name="algorithms" id="difficulty-picker" oninput="initialDraw();">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+          <option value="crazy">Crazy</option>
+        </select>
+
+        <button id="start-btn" class="btn btn-green">Start</button>
+        <button id="stop-btn" class="btn btn-red">Stop</button>
+        <button id="clear-btn" class="btn btn-ghost">Clear</button>
+
+        <div id="instance-controls">
+          <button id="remove-btn" class="btn btn-ghost icon-btn">-</button>
+          <span id="instance-count">1</span>
+          <button id="add-btn" class="btn btn-ghost icon-btn">+</button>
+        </div>
+      </div>
+    </nav>
+
+    <div id="instance-container">
+      <nav id="instance-header">
+        <span>Instance 1</span>
+
+        <select name="algorithms" id="algo-picker">
+          <option value="BFS">BFS</option>
+          <option value="DFS">DFS</option>
+          <option value="Dijkstra">Dijkstra</option>
+          <option value="A*">A*</option>
+        </select>
+      </nav>
+
+      <canvas id="main-grid" width="1" height="1"></canvas>
+    </div>
+  </body>
+
+  <script src="drawCanvas.js"></script>
+</html>
