@@ -11,12 +11,15 @@
       <span id="nav-title">Pathfinding Visualizer</span>
 
       <div id="nav-controls">
-        <select name="algorithms" id="difficulty-picker" oninput="initialDraw();">
+        <select name="algorithms" id="difficulty-picker" oninput="initialGridDraw();">
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
           <option value="crazy">Crazy</option>
         </select>
+
+        <button id="generateMaze-btn" class="btn btn-ghost" onclick="generateMaze();">Generate Maze</button>
+
 
         <button id="start-btn" class="btn btn-green">Start</button>
         <button id="stop-btn" class="btn btn-red">Stop</button>
@@ -34,17 +37,21 @@
       <nav id="instance-header">
         <span>Instance 1</span>
 
+        <div>
         <select name="algorithms" id="algo-picker">
           <option value="BFS">BFS</option>
           <option value="DFS">DFS</option>
           <option value="Dijkstra">Dijkstra</option>
           <option value="A*">A*</option>
         </select>
+        </div>
       </nav>
-
+      
       <canvas id="main-grid" width="1" height="1"></canvas>
     </div>
   </body>
 
   <script src="drawCanvas.js"></script>
+  <script src="mazeGen.js"></script>
+
 </html>
