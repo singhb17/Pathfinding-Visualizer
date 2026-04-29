@@ -7,10 +7,11 @@ let rowColumnList = {
 }
 
 // Resize Warning
-window.addEventListener('resize', function () {
-  alert("Please keep page size the same before pressing 'Start' ");
-  initialGridDraw();
-});
+// TODO: uncomment this after finishing development
+// window.addEventListener('resize', function () {
+//   alert("Please keep page size the same before pressing 'Start' ");
+//   initialGridDraw();
+// });
 
 //! Global scope to access in other JS files
 let difficulty;
@@ -19,6 +20,8 @@ var c;
 var ctx;
 let gridWidth;
 let gridHeight;
+let sqSide;
+
 
 function initialGridDraw() {
 
@@ -36,7 +39,7 @@ function initialGridDraw() {
   c.width = gridWidth;
   c.height = gridHeight;
 
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = "grey";
 
   for (let x = 0; x < gridWidth; x += (gridWidth / finalRowColumn[0])) {
     ctx.moveTo(x, 0);
@@ -55,32 +58,41 @@ const pause = (ms) => new Promise(res => setTimeout(res, ms));
 
 async function fillRectMaze() {
 
-  let sqSide = gridWidth / finalRowColumn[0];
+  sqSide = gridWidth / finalRowColumn[0];
 
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
 
-        if (maze[y][x] == 1) {
-          ctx.fillStyle = "white";
-          ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
-          ctx.fill();
-        }
+      if (maze[y][x] == 1) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fill();
+      }
 
-        else if (maze[y][x] == 100) {
-          ctx.fillStyle = "green";
-          ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
-          ctx.fill();
-        }
+      else if (maze[y][x] == 100) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fill();
+      }
 
-        else if (maze[y][x] == -100) {
-          ctx.fillStyle = "red";
-          ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
-          ctx.fill();
-        }
+      else if (maze[y][x] == -100) {
+        ctx.fillStyle = "red";
+        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fill();
+      }
 
-      await pause(10);
+      await pause(12);
     }
   }
+}
+
+function drawVisited(visitedX, visitedY) {
+  console.log("VISITED DRAW");
+
+  ctx.fillStyle = "grey";
+  ctx.fillRect(visitedX * sqSide, visitedY * sqSide, sqSide, sqSide);
+  ctx.fill();
+
 }
 
 initialGridDraw();

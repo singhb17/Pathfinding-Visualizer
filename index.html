@@ -21,8 +21,8 @@
         <button id="generateMaze-btn" class="btn btn-ghost" onclick="generateMaze();">Generate Maze</button>
 
 
-        <button id="start-btn" class="btn btn-green">Start</button>
-        <button id="stop-btn" class="btn btn-red">Stop</button>
+        <button id="start-stop-btn" class="btn btn-green">Start</button>
+        <!-- <button id="stop-btn" class="btn btn-red">Stop</button> -->
         <button id="clear-btn" class="btn btn-ghost">Clear</button>
 
         <div id="instance-controls">
@@ -45,13 +45,17 @@
           <option value="A*">A*</option>
         </select>
         </div>
+        <!-- <button id="TEST" class="btn btn-ghost" onclick="bfs();">TEST</button> -->
       </nav>
       
       <canvas id="main-grid" width="1" height="1"></canvas>
     </div>
+    
   </body>
 
   <script src="drawCanvas.js"></script>
   <script src="mazeGen.js"></script>
-
+  <script src="mainAlgo.js"></script>
+  <script src="main.js"></script>
+  
 </html>

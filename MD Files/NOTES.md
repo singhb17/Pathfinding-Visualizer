@@ -16,6 +16,11 @@ _A running reference for Binwa — decisions made, concepts explained, function 
 | 2026-04-22 | All instances share one maze array | Maze drawn once; all instances read same layout, run their algorithms independently |
 | 2026-04-22 | Maze values: 0=open, 1=wall, 100=start, -100=end | Integer encoding — simple to check, easy to extend for weighted terrain later |
 | 2026-04-22 | async/await + pause() for animation | Cleaner than staggered setTimeout — loop reads naturally, delay is explicit per step |
+| 2026-04-28 | Visited nodes tracked in a separate array, not written back to maze[][] | Mutating the maze breaks Clear and re-runs; keep maze as read-only truth during algorithm |
+| 2026-04-28 | BFS node identity as 'col,row' string | Simple to push/compare in queue/visited arrays; parse with .split(',') for two-digit coords |
+| 2026-04-28 | Pause/resume: global `running` flag + `continue` not `break` | `break` would kill the loop; `continue` keeps it alive spinning at 100ms intervals, resumes cleanly when `running` flips back to true |
+| 2026-04-28 | Start/Stop merged into one toggle button | Simpler UX; swaps text, class, and onclick — only one button state to manage |
+| 2026-04-28 | `algoPause` in mainAlgo.js is a duplicate of `pause` in drawCanvas.js | Both are in global scope; should consolidate to just `pause` eventually |
 
 ---
 
@@ -42,7 +47,13 @@ _A running reference for Binwa — decisions made, concepts explained, function 
 - Fixed `ctx.rect` → `ctx.fillRect` bug (rect accumulates path, fillRect draws immediately).
 - Added reveal animation: `async/await` + `pause(ms)` helper staggered per cell — maze appears left-to-right, row by row.
 - Confirmed canvas handles animation fine — not a reason to switch to divs.
-- Next session: implement BFS on the maze array.
+- BFS started: queue/visited arrays, '1,1' start, neighbour generation via string concat, bounds checking.
+
+### 2026-04-28 — BFS complete + code review
+- Fixed all BFS bugs: queue != [] comparison, queue.pop vs shift, i vs possibilities[i], QZNS[0][0] double-indexing, char indexing for two-digit coords (→ .split(',')), 100K push bug (visited check on enqueue not just dequeue).
+- `drawVisited()` added to `drawCanvas.js`, wired into BFS loop with animation delay.
+- `main.js` created: start/stop toggle, `running` flag, algo-picker routing.
+- Full code review session: bugs documented, architecture verified, known gaps identified (see Open Questions).
 
 ---
 
@@ -51,18 +62,38 @@ _A running reference for Binwa — decisions made, concepts explained, function 
 ```
 mazeGen.js
   maze[][]                  ← 2D array, source of truth (0=open, 1=wall, 100=start, -100=end)
-  generateMaze()            ← calls fillRectMaze() to kick off render
+  generateMaze()            ← calls fillRectMaze() to kick off canvas render
 
 drawCanvas.js
   rowColumnList             ← maps difficulty → [cols, rows]
   initialGridDraw()         ← reads difficulty picker, sizes canvas, draws grid lines
     └── reads rowColumnList
     └── reads window.innerWidth
-  pause(ms)                 ← returns a Promise that resolves after ms milliseconds
+  pause(ms)                 ← Promise wrapper around setTimeout (used for animation delays)
   fillRectMaze()  [async]   ← loops maze[][], draws each cell with correct color + await pause()
-    └── reads maze          ← from mazeGen.js (shared global scope)
-    └── calls pause()
+    └── reads maze          (global from mazeGen.js)
+    └── sets global sqSide  ← BUG NOTE: sqSide only exists after fillRectMaze runs
+  drawVisited(col, row)     ← fills one cell grey on the canvas; called by BFS per visited node
+    └── uses global sqSide
+
+mainAlgo.js
+  battleMode                ← flag (unused, always false — reserved for Phase 4)
+  algoPause(ms)             ← DUPLICATE of pause() from drawCanvas.js, should be removed
+  bfs()  [async]            ← BFS on maze[][], uses queue + visited string arrays ('col,row' format)
+    └── reads maze          (global)
+    └── calls drawVisited() (global from drawCanvas.js)
+    └── checks running flag (global from main.js)
+    └── calls stopAlgo()    (global from main.js) when end node found
+
+main.js
+  running                   ← global pause/resume flag (true = running, false = paused)
+  startAlgo()               ← flips button to Stop, sets running=true, reads algo-picker, calls bfs()
+  stopAlgo()                ← flips button to Start, sets running=false
+  btn.onclick = startAlgo   ← initial wiring on page load
 ```
+
+**Load order (index.html script tags):** drawCanvas.js → mazeGen.js → mainAlgo.js → main.js
+Each file uses globals defined by earlier files. Order matters.
 
 ---
 
@@ -83,6 +114,11 @@ drawCanvas.js
 ---
 
 ## Open Questions / Things to Decide
-- BFS node representation during search — track visited as a separate array, or mark directly in `maze[][]`? (Separate array is cleaner — don't mutate the maze)
-- Multi-instance implementation: `MazeInstance` class in JS, each with its own canvas, all reading shared `maze[][]`
-- Mouse drawing (click to place walls) — low priority, can be skipped if time is tight
+- **Path reconstruction:** BFS needs a `parent` map (`visited[node] = parentNode`) alongside the queue to trace back the shortest path after finding the end. Without it, you can never draw the path. This is the main missing piece in Phase 2.
+- **sqSide timing bug:** `sqSide` is only set when `fillRectMaze()` runs. If Start is clicked before Generate Maze, `drawVisited` breaks. Fix: set sqSide in `initialGridDraw()` too, or auto-call generateMaze on first Start.
+- **Double-BFS bug:** clicking Stop then Start spawns a new `bfs()` while the old one is paused, creating two concurrent loops on the same canvas. Fix: add a guard (e.g., a separate `hasAlgoStarted` boolean) to block re-entry while a loop is alive.
+- **Negative bounds not checked:** BFS checks `partX < maze[0].length` but not `partX >= 0`. Safe now because border walls prevent reaching col 0 / row 0, but will break on a maze without full border walls.
+- **Multi-instance (Phase 4):** Everything is ID-based (`main-grid`, `algo-picker`, etc.). Multiple instances will require parameterizing all these references — likely a class-based `MazeInstance` approach. Know this is coming.
+- **`algoPause` duplicate:** remove it from mainAlgo.js, just use the global `pause()` from drawCanvas.js.
+- **+/− and Clear buttons:** not wired up yet.
+- **Mouse drawing (click to place walls):** low priority, can be skipped if time is tight.

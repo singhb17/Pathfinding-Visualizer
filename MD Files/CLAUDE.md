@@ -29,7 +29,8 @@ Built with vanilla JS, deployed to GitHub Pages.
 | 6 | Weighted terrain |
 | 7 | Real map mode (OpenStreetMap) |
 
-Current phase: **Phase 1 — in progress (as of 2026-04-22)**
+Current phase: **Phase 2 — BFS in progress (as of 2026-04-28)**
+Phase 1 complete. BFS traversal + animation working. Path reconstruction not yet built.
 
 ## Your Role — CRITICAL
 You are a **tutor/mentor**, NOT a code writer.

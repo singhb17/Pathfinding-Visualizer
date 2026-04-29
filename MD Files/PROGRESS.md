@@ -11,7 +11,8 @@ _For Binwa's teacher — daily log of what was built, decided, or learned._
 | 2026-04-20 | Setup | Project planning, MD tracking system initialized |
 | 2026-04-21 | Phase 1 | Dark mode navbar built (Start, Stop, Clear, +/-, difficulty picker) |
 | 2026-04-22 | Phase 1 | Canvas grid rendering working — draws responsive grid from difficulty presets |
-| 2026-04-27 | Phase 1 | Maze array connected, cell coloring working, reveal animation implemented |
+| 2026-04-27 | Phase 1→2 | Maze array connected, cell coloring working, reveal animation implemented; BFS started |
+| 2026-04-28 | Phase 2 | BFS fully working (all bugs fixed), pause/resume, visited animation, start/stop wired; full code review |
 
 ---
 
@@ -91,5 +92,24 @@ _For Binwa's teacher — daily log of what was built, decided, or learned._
 - Canvas scales better than DOM for animation-heavy use cases
 
 **Next up:** Phase 2 — implement BFS, animate it visiting cells step by step, draw the final path
+
+---
+
+### 2026-04-28 — BFS + Code Review
+**Phase:** 2 — BFS
+
+**What was done:**
+- Debugged and fixed BFS through full iteration: queue comparison bug, pop vs shift, character indexing bug for two-digit coordinates (→ .split(',')), 100K push bug (visited check must happen at enqueue time, not dequeue)
+- `drawVisited()` connected to BFS loop — visited nodes animate grey as BFS explores
+- `main.js` built: start/stop button toggle, `running` flag for pause/resume, algo-picker routing
+- Full code review session — architecture confirmed sound, known bugs and gaps documented in NOTES.md
+
+**What was learned:**
+- Why you must check `visited` at the time you push to queue, not when you pop — otherwise the same node gets queued multiple times before it's ever visited
+- `'10,3'[0]` returns `'1'` not `'10'` — character indexing breaks on two-digit numbers; always use `.split(',')` then `Number()`
+- `continue` vs `break` in an async loop — `break` kills the loop, `continue` keeps it alive for resuming
+- `pause/resume` pattern using a global boolean flag and an await-loop that spins in place until the flag flips
+
+**Next up:** Path reconstruction — add a `parent` map to BFS, trace back from end to start, draw the shortest path
 
 ---
