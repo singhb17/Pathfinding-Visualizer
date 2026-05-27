@@ -64,6 +64,18 @@ body {
   color: var(--text);
 }
 
+.btn-toggle-easy {
+  background: transparent;
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.btn-toggle-hard {
+  background: transparent;
+  border-color: var(--red);
+  color: var(--red);
+}
+
 #instance-controls {
   display: flex;
   align-items: center;

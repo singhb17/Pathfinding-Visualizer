@@ -6,7 +6,7 @@
     <title>Pathfinding Visualizer</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body onload="initialGridDraw();">
     <nav id="navbar">
       <span id="nav-title">Pathfinding Visualizer</span>
 
@@ -20,10 +20,11 @@
 
         <button id="generateMaze-btn" class="btn btn-ghost" onclick="generateMaze();">Generate Maze</button>
 
+        <button id="hard-maze-btn" class="btn btn-toggle-easy" onclick="toggleHardMaze();">Easy Maze</button>
 
         <button id="start-stop-btn" class="btn btn-green">Start</button>
         <!-- <button id="stop-btn" class="btn btn-red">Stop</button> -->
-        <button id="clear-btn" class="btn btn-ghost">Clear</button>
+        <button id="clear-btn" class="btn btn-ghost" onclick="location.reload();">Clear</button>
 
         <div id="instance-controls">
           <button id="remove-btn" class="btn btn-ghost icon-btn">-</button>
@@ -38,7 +39,7 @@
         <span>Instance 1</span>
 
         <div>
-        <select name="algorithms" id="algo-picker">
+        <select name="algorithms" id="algo-picker" oninput="initialGridDraw(); fillRectMaze();">
           <option value="BFS">BFS</option>
           <option value="DFS">DFS</option>
           <option value="Dijkstra">Dijkstra</option>

@@ -1,9 +1,9 @@
 
 let rowColumnList = {
-  "easy": [20, 12],
-  "medium": [40, 24],
-  "hard": [60, 36],
-  "crazy": [100, 60]
+  "easy": [21, 13],
+  "medium": [41, 25],
+  "hard": [61, 37],
+  "crazy": [101, 61]
 }
 
 // Resize Warning
@@ -20,7 +20,9 @@ var c;
 var ctx;
 let gridWidth;
 let gridHeight;
-let sqSide;
+
+let sqW;
+let sqH;
 
 
 function initialGridDraw() {
@@ -38,6 +40,9 @@ function initialGridDraw() {
 
   c.width = gridWidth;
   c.height = gridHeight;
+
+  sqW = gridWidth / finalRowColumn[0];
+  sqH = gridHeight / finalRowColumn[1];
 
   ctx.strokeStyle = "grey";
 
@@ -58,30 +63,31 @@ const pause = (ms) => new Promise(res => setTimeout(res, ms));
 
 async function fillRectMaze() {
 
-  sqSide = gridWidth / finalRowColumn[0];
+  sqW = gridWidth / finalRowColumn[0];
+  sqH = gridHeight / finalRowColumn[1];
 
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
 
       if (maze[y][x] == 1) {
         ctx.fillStyle = "white";
-        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fillRect(x * sqW, y * sqH, sqW, sqH);
         ctx.fill();
       }
 
       else if (maze[y][x] == 100) {
-        ctx.fillStyle = "green";
-        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fillStyle = "#00FF00";
+        ctx.fillRect(x * sqW, y * sqH, sqW, sqH);
         ctx.fill();
       }
 
       else if (maze[y][x] == -100) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(x * sqSide, y * sqSide, sqSide, sqSide);
+        ctx.fillStyle = "#FF0000";
+        ctx.fillRect(x * sqW, y * sqH, sqW, sqH);
         ctx.fill();
       }
 
-      await pause(12);
+      // await pause(1);
     }
   }
 }
@@ -89,10 +95,20 @@ async function fillRectMaze() {
 function drawVisited(visitedX, visitedY) {
   console.log("VISITED DRAW");
 
-  ctx.fillStyle = "grey";
-  ctx.fillRect(visitedX * sqSide, visitedY * sqSide, sqSide, sqSide);
+  ctx.fillStyle = "#65cdf0";
+  ctx.fillRect(visitedX * sqW, visitedY * sqH, sqW, sqH);
   ctx.fill();
 
+}
+
+async function drawPath(path) {
+
+  for (let i = 0; i < path.length; i++) {
+    ctx.fillStyle = "#7365f0";
+    ctx.fillRect(path[i][0] * sqW, path[i][1] * sqH, sqW, sqH);
+    ctx.fill();
+    await pause(25);
+  }
 }
 
 initialGridDraw();
